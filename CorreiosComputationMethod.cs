@@ -83,7 +83,6 @@ namespace NopBrasil.Plugin.Shipping.Correios
             return true;
         }
 
-        //refactorar método
         public GetShippingOptionResponse GetShippingOptions(GetShippingOptionRequest getShippingOptionRequest)
         {
             if (getShippingOptionRequest == null)
@@ -101,40 +100,22 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
                 WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
 
-                if (wsResult != null)
+                foreach (WSCorreiosCalcPrecoPrazo.cServico serv in wsResult?.Servicos)
                 {
-                    foreach (WSCorreiosCalcPrecoPrazo.cServico serv in wsResult.Servicos)
+                    try
                     {
-                        try
-                        {
-                            ValidateWSResult(serv);
-
-                            int prazo = Convert.ToInt32(serv.PrazoEntrega);
-                            if (_correiosSettings.AddDaysForDelivery > 0)
-                                prazo += _correiosSettings.AddDaysForDelivery;
-
-                            ShippingOption shippingOption = new ShippingOption();
-                            shippingOption.Rate = _correiosService.GetConvertedRate(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR")));
-                            shippingOption.Name = CorreiosServiceType.GetServiceName(serv.Codigo.ToString()) + " - " + prazo.ToString() + " dia(s)";
-                            response.ShippingOptions.Add(shippingOption);
-                        }
-                        catch (Exception e)
-                        {
-                            response.AddError(e.Message);
-                        }
+                        ValidateWSResult(serv);
+                        response.ShippingOptions.Add(GetShippingOption(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR")), CorreiosServiceType.GetServiceName(serv.Codigo.ToString()), CalcPrazoEntrega(serv)));
                     }
-                }
-                else
-                {
-                    response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.ErrorConnectCorreios"));
+                    catch (Exception e)
+                    {
+                        response.AddError(e.Message);
+                    }
                 }
 
                 if (response.ShippingOptions.Count <= 0)
                 {
-                    ShippingOption shippingOption = new ShippingOption();
-                    shippingOption.Rate = _correiosService.GetConvertedRate(_correiosSettings.ShippingRateDefault);
-                    shippingOption.Name = _correiosSettings.ServiceNameDefault + " - " + _correiosSettings.QtdDaysForDeliveryDefault.ToString() + " dia(s)";
-                    response.ShippingOptions.Add(shippingOption);
+                    response.ShippingOptions.Add(GetShippingOption(_correiosSettings.ShippingRateDefault, _correiosSettings.ServiceNameDefault, _correiosSettings.QtdDaysForDeliveryDefault));
                 }
             }
             catch (Exception e)
@@ -144,6 +125,19 @@ namespace NopBrasil.Plugin.Shipping.Correios
             }
 
             return response;
+        }
+
+        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo)
+        {
+            return new ShippingOption() { Rate = _correiosService.GetConvertedRate(rate), Name = $"{serviceName} - {prazo} dia(s)" };
+        }
+
+        private int CalcPrazoEntrega(WSCorreiosCalcPrecoPrazo.cServico serv)
+        {
+            int prazo = Convert.ToInt32(serv.PrazoEntrega);
+            if (_correiosSettings.AddDaysForDelivery > 0)
+                prazo += _correiosSettings.AddDaysForDelivery;
+            return prazo;
         }
 
         private void ValidateWSResult(WSCorreiosCalcPrecoPrazo.cServico wsServico)

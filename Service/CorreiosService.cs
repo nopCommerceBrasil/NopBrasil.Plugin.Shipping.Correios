@@ -59,7 +59,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         {
             var usedMeasureWeight = _measureService.GetMeasureWeightBySystemKeyword(MEASURE_WEIGHT_SYSTEM_KEYWORD);
             if (usedMeasureWeight == null)
-                throw new NopException(string.Format("Correios shipping service. Could not load \"{0}\" measure weight", MEASURE_WEIGHT_SYSTEM_KEYWORD));
+                throw new NopException($"Correios shipping service. Could not load \"{MEASURE_WEIGHT_SYSTEM_KEYWORD}\" measure weight");
 
             int weight = Convert.ToInt32(Math.Ceiling(_measureService.ConvertFromPrimaryMeasureWeight(_shippingService.GetTotalWeight(shippingOptionRequest), usedMeasureWeight)));
             if (weight < 1)
@@ -72,7 +72,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         {
             var usedMeasureDimension = _measureService.GetMeasureDimensionBySystemKeyword(MEASURE_DIMENSION_SYSTEM_KEYWORD);
             if (usedMeasureDimension == null)
-                throw new NopException(string.Format("Correios shipping service. Could not load \"{0}\" measure dimension", MEASURE_DIMENSION_SYSTEM_KEYWORD));
+                throw new NopException($"Correios shipping service. Could not load \"{MEASURE_DIMENSION_SYSTEM_KEYWORD}\" measure dimension");
 
             _shippingService.GetDimensions(shippingOptionRequest.Items, out width, out length, out height);
 
@@ -93,7 +93,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         {
             var usedCurrency = _currencyService.GetCurrencyByCode(CURRENCY_CODE);
             if (usedCurrency == null)
-                throw new NopException(string.Format("Correios shipping service. Could not load \"{0}\" currency", CURRENCY_CODE));
+                throw new NopException($"Correios shipping service. Could not load \"{CURRENCY_CODE}\" currency");
 
             if (usedCurrency.CurrencyCode == _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode)
                 return rate;

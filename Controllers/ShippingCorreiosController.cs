@@ -49,7 +49,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
                     if (!String.IsNullOrEmpty(serviceId) && !String.IsNullOrEmpty(carrierServicesOfferedDomestic))
                     {
                         // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
-                        if (carrierServicesOfferedDomestic.Contains(String.Format("[{0}]", serviceId)))
+                        if (carrierServicesOfferedDomestic.Contains($"[{serviceId}]"))
                             model.ServicesOffered.Add(service);
                     }
                 }
