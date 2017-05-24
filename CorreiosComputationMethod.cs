@@ -21,28 +21,18 @@ namespace NopBrasil.Plugin.Shipping.Correios
 {
     public class CorreiosComputationMethod : BasePlugin, IShippingRateComputationMethod
     {
-        private readonly IMeasureService _measureService;
-        private readonly IShippingService _shippingService;
         private readonly ISettingService _settingService;
         private readonly CorreiosSettings _correiosSettings;
-        private readonly ICurrencyService _currencyService;
-        private readonly CurrencySettings _currencySettings;
         private readonly ILogger _logger;
         private readonly ILocalizationService _localizationService;
         private readonly ICorreiosService _correiosService;
 
-        public CorreiosComputationMethod(IMeasureService measureService,
-            IShippingService shippingService, ISettingService settingService,
-            CorreiosSettings correiosSettings, ICurrencyService currencyService, 
-            CurrencySettings currencySettings, ILogger logger,
+        public CorreiosComputationMethod(ISettingService settingService,
+            CorreiosSettings correiosSettings, ILogger logger,
             ILocalizationService localizationService, ICorreiosService correiosService)
         {
-            this._measureService = measureService;
-            this._shippingService = shippingService;
             this._settingService = settingService;
             this._correiosSettings = correiosSettings;
-            this._currencyService = currencyService;
-            this._currencySettings = currencySettings;
             this._logger = logger;
             this._localizationService = localizationService;
             this._correiosService = correiosService;
