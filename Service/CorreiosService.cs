@@ -6,6 +6,8 @@ using System;
 using System.Text;
 using System.Linq;
 using Nop.Core.Caching;
+using System.ServiceModel.Channels;
+using System.ServiceModel;
 
 namespace NopBrasil.Plugin.Shipping.Correios.Service
 {
@@ -19,13 +21,38 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
 
         //colocar cache nas pesquisas de medidas e peso
         private readonly ICacheManager _cacheManager;
+        private readonly IMeasureService _measureService;
+        private readonly IShippingService _shippingService;
+        private readonly CorreiosSettings _correiosSettings;
 
-        public CorreiosService(ICacheManager cacheManager)
+
+        public CorreiosService(ICacheManager cacheManager, IMeasureService measureService, IShippingService shippingService, CorreiosSettings correiosSettings)
         {
             this._cacheManager = cacheManager;
+            this._measureService = measureService;
+            this._shippingService = shippingService;
+            this._correiosSettings = correiosSettings;
         }
 
-        public int GetWheight(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService)
+        public WSCorreiosCalcPrecoPrazo.cResultado RequestCorreios(GetShippingOptionRequest getShippingOptionRequest, string selectedServices)
+        {
+            Binding binding = new BasicHttpBinding();
+            binding.Name = "CalcPrecoPrazoWSSoap";
+
+            decimal length, width, height;
+            GetDimensions(getShippingOptionRequest, _measureService, _shippingService, out width, out length, out height);
+
+            decimal valuePackage = getShippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price);
+
+            EndpointAddress endpointAddress = new EndpointAddress(_correiosSettings.Url);
+
+            WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoap wsCorreios = new WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoapClient(binding, endpointAddress);
+            return wsCorreios.CalcPrecoPrazo(_correiosSettings.CompanyCode, _correiosSettings.Password, selectedServices, _correiosSettings.PostalCodeFrom,
+                getShippingOptionRequest.ShippingAddress.ZipPostalCode, GetWheight(getShippingOptionRequest, _measureService,
+                _shippingService).ToString(), 1, length, height, width, 0, "N", valuePackage, "N");
+        }
+
+        private int GetWheight(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService)
         {
             var usedMeasureWeight = measureService.GetMeasureWeightBySystemKeyword(MEASURE_WEIGHT_SYSTEM_KEYWORD);
             if (usedMeasureWeight == null)
@@ -38,7 +65,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             return weight;
         }
 
-        public void GetDimensions(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService, out decimal width, out decimal length, out decimal height)
+        private void GetDimensions(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService, out decimal width, out decimal length, out decimal height)
         {
             var usedMeasureDimension = measureService.GetMeasureDimensionBySystemKeyword(MEASURE_DIMENSION_SYSTEM_KEYWORD);
             if (usedMeasureDimension == null)

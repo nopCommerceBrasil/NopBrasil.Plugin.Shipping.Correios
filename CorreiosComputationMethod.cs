@@ -48,6 +48,41 @@ namespace NopBrasil.Plugin.Shipping.Correios
             this._correiosService = correiosService;
         }
 
+        private bool ValidateRequest(GetShippingOptionRequest getShippingOptionRequest, GetShippingOptionResponse response)
+        {
+            if (getShippingOptionRequest.Items == null)
+            {
+                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.NoShipmentItems"));
+                return false;
+            }
+
+            if (getShippingOptionRequest.ShippingAddress == null)
+            {
+                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.AddressNotSet"));
+                return false;
+            }
+
+            if (getShippingOptionRequest.ShippingAddress.Country == null)
+            {
+                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.CountryNotSet"));
+                return false;
+            }
+
+            if (getShippingOptionRequest.ShippingAddress.StateProvince == null)
+            {
+                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.StateNotSet"));
+                return false;
+            }
+
+            if (getShippingOptionRequest.ShippingAddress.ZipPostalCode == null)
+            {
+                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet"));
+                return false;
+            }
+
+            return true;
+        }
+
         //refactorar método
         public GetShippingOptionResponse GetShippingOptions(GetShippingOptionRequest getShippingOptionRequest)
         {
@@ -56,58 +91,15 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
             var response = new GetShippingOptionResponse();
 
-            if (getShippingOptionRequest.Items == null)
-            {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.NoShipmentItems"));
+            if (ValidateRequest(getShippingOptionRequest, response))
                 return response;
-            }
-
-            if (getShippingOptionRequest.ShippingAddress == null)
-            {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.AddressNotSet"));
-                return response;
-            }
-
-            if (getShippingOptionRequest.ShippingAddress.Country == null)
-            {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.CountryNotSet"));
-                return response;
-            }
-
-            if (getShippingOptionRequest.ShippingAddress.StateProvince == null)
-            {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.StateNotSet"));
-                return response;
-            }
-
-            if (getShippingOptionRequest.ShippingAddress.ZipPostalCode == null)
-            {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet"));
-                return response;
-            }
 
             try
             {
                 if (string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
                     getShippingOptionRequest.ZipPostalCodeFrom = _correiosSettings.PostalCodeFrom;
 
-                string selectedServices = _correiosService.GetSelectecServices(_correiosSettings);
-
-                Binding binding = new BasicHttpBinding();
-                binding.Name = "CalcPrecoPrazoWSSoap";
-
-                decimal length, width, height;
-                _correiosService.GetDimensions(getShippingOptionRequest, _measureService, _shippingService, out width, out length, out height);
-
-                decimal valuePackage = getShippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price);
-
-                EndpointAddress endpointAddress = new EndpointAddress(_correiosSettings.Url);
-
-                WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoap wsCorreios = new WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoapClient(binding, endpointAddress);
-                WSCorreiosCalcPrecoPrazo.cResultado wsResult = wsCorreios.CalcPrecoPrazo(_correiosSettings.CompanyCode, _correiosSettings.Password,
-                    selectedServices, _correiosSettings.PostalCodeFrom, getShippingOptionRequest.ShippingAddress.ZipPostalCode,
-                        _correiosService.GetWheight(getShippingOptionRequest, _measureService, _shippingService).ToString(), 1,
-                            length, height, width, 0, "N", valuePackage, "N");
+                WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest, _correiosService.GetSelectecServices(_correiosSettings));
 
                 if (wsResult != null)
                 {
