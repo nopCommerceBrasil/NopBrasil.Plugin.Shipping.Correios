@@ -19,18 +19,15 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         private const string CURRENCY_CODE = "BRL";
         //colocar o tamanho/peso mínimo/máximo permitido dos produtos como configuração
 
-        //colocar cache nas pesquisas de medidas e peso
-        private readonly ICacheManager _cacheManager;
         private readonly IMeasureService _measureService;
         private readonly IShippingService _shippingService;
         private readonly CorreiosSettings _correiosSettings;
         private readonly ICurrencyService _currencyService;
         private readonly CurrencySettings _currencySettings;
 
-        public CorreiosService(ICacheManager cacheManager, IMeasureService measureService, IShippingService shippingService, CorreiosSettings correiosSettings,
+        public CorreiosService(IMeasureService measureService, IShippingService shippingService, CorreiosSettings correiosSettings,
             ICurrencyService currencyService, CurrencySettings currencySettings)
         {
-            this._cacheManager = cacheManager;
             this._measureService = measureService;
             this._shippingService = shippingService;
             this._correiosSettings = correiosSettings;
@@ -42,6 +39,9 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         {
             Binding binding = new BasicHttpBinding();
             binding.Name = "CalcPrecoPrazoWSSoap";
+
+            if (string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
+                getShippingOptionRequest.ZipPostalCodeFrom = _correiosSettings.PostalCodeFrom;
 
             decimal length, width, height;
             GetDimensions(getShippingOptionRequest, out width, out length, out height);

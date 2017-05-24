@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Web.Routing;
 using Nop.Core;
-using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Plugins;
 using Nop.Services.Configuration;
-using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Tracking;
 using NopBrasil.Plugin.Shipping.Correios.Domain;
 using NopBrasil.Plugin.Shipping.Correios.Service;
-using System.ServiceModel.Channels;
-using System.ServiceModel;
 
 namespace NopBrasil.Plugin.Shipping.Correios
 {
@@ -85,10 +80,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
             try
             {
-                if (string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
-                    getShippingOptionRequest.ZipPostalCodeFrom = _correiosSettings.PostalCodeFrom;
-
-                WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
+                  WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
 
                 foreach (WSCorreiosCalcPrecoPrazo.cServico serv in wsResult?.Servicos)
                 {
