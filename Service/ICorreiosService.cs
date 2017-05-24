@@ -6,14 +6,8 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
 {
     public interface ICorreiosService
     {
-        WSCorreiosCalcPrecoPrazo.cResultado RequestCorreios(GetShippingOptionRequest getShippingOptionRequest, string selectedServices);
+        WSCorreiosCalcPrecoPrazo.cResultado RequestCorreios(GetShippingOptionRequest getShippingOptionRequest);
 
-        //int GetWheight(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService);
-
-        //void GetDimensions(GetShippingOptionRequest shippingOptionRequest, IMeasureService measureService, IShippingService shippingService, out decimal width, out decimal length, out decimal height);
-
-        decimal GetConvertedRate(decimal rate, ICurrencyService currencyService, CurrencySettings currencySettings);
-
-        string GetSelectecServices(CorreiosSettings correioSettings);
+        decimal GetConvertedRate(decimal rate);
     }
 }

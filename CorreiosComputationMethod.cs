@@ -99,7 +99,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 if (string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
                     getShippingOptionRequest.ZipPostalCodeFrom = _correiosSettings.PostalCodeFrom;
 
-                WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest, _correiosService.GetSelectecServices(_correiosSettings));
+                WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
 
                 if (wsResult != null)
                 {
@@ -114,7 +114,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
                                 prazo += _correiosSettings.AddDaysForDelivery;
 
                             ShippingOption shippingOption = new ShippingOption();
-                            shippingOption.Rate = _correiosService.GetConvertedRate(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR")), _currencyService, _currencySettings);
+                            shippingOption.Rate = _correiosService.GetConvertedRate(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR")));
                             shippingOption.Name = CorreiosServiceType.GetServiceName(serv.Codigo.ToString()) + " - " + prazo.ToString() + " dia(s)";
                             response.ShippingOptions.Add(shippingOption);
                         }
@@ -132,7 +132,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 if (response.ShippingOptions.Count <= 0)
                 {
                     ShippingOption shippingOption = new ShippingOption();
-                    shippingOption.Rate = _correiosService.GetConvertedRate(_correiosSettings.ShippingRateDefault, _currencyService, _currencySettings);
+                    shippingOption.Rate = _correiosService.GetConvertedRate(_correiosSettings.ShippingRateDefault);
                     shippingOption.Name = _correiosSettings.ServiceNameDefault + " - " + _correiosSettings.QtdDaysForDeliveryDefault.ToString() + " dia(s)";
                     response.ShippingOptions.Add(shippingOption);
                 }
