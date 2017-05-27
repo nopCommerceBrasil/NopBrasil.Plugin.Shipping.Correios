@@ -38,26 +38,24 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
             model.ShippingRateDefault = _correiosSettings.ShippingRateDefault;
             model.QtdDaysForDeliveryDefault = _correiosSettings.QtdDaysForDeliveryDefault;
 
-            var services = new CorreiosServiceType();
-            string carrierServicesOfferedDomestic = _correiosSettings.ServicesOffered;
-
-            foreach (string service in services.Services)
+            var serviceTypoes = new CorreiosServiceType();
+            foreach (string service in serviceTypoes.Services)
                 model.AvailableCarrierServices.Add(service);
+            LoadSavedServices(model, serviceTypoes);
 
-            if (!String.IsNullOrEmpty(carrierServicesOfferedDomestic))
-            {
-                foreach (string service in services.Services)
+            return View("~/Plugins/Shipping.Correios/Views/ShippingCorreios/Configure.cshtml", model);
+        }
+
+        private void LoadSavedServices(CorreiosShippingModel model, CorreiosServiceType serviceTypoes)
+        {
+            if (!string.IsNullOrEmpty(_correiosSettings.ServicesOffered))
+                foreach (string service in serviceTypoes.Services)
                 {
                     string serviceId = CorreiosServiceType.GetServiceId(service);
-                    if (!String.IsNullOrEmpty(serviceId) && !String.IsNullOrEmpty(carrierServicesOfferedDomestic))
-                    {
-                        // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
-                        if (carrierServicesOfferedDomestic.Contains($"[{serviceId}]"))
+                    if (!string.IsNullOrEmpty(serviceId) && !string.IsNullOrEmpty(_correiosSettings.ServicesOffered))
+                        if (_correiosSettings.ServicesOffered.Contains($"[{serviceId}]")) // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
                             model.ServicesOffered.Add(service);
-                    }
                 }
-            }
-            return View("~/Plugins/Shipping.Correios/Views/ShippingCorreios/Configure.cshtml", model);
         }
 
         [HttpPost]
@@ -67,7 +65,6 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
             if (!ModelState.IsValid)
                 return Configure();
 
-            //save settings
             _correiosSettings.Url = model.Url;
             _correiosSettings.PostalCodeFrom = model.PostalCodeFrom;
             _correiosSettings.CompanyCode = model.CompanyCode;
@@ -76,27 +73,23 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
             _correiosSettings.ServiceNameDefault = model.ServiceNameDefault;
             _correiosSettings.ShippingRateDefault = model.ShippingRateDefault;
             _correiosSettings.QtdDaysForDeliveryDefault = model.QtdDaysForDeliveryDefault;
-
-            // Save selected services
-            var carrierServicesOfferedDomestic = new StringBuilder();
-            int carrierServicesDomesticSelectedCount = 0;
-            if (model.CheckedCarrierServices != null)
-            {
-                foreach (var cs in model.CheckedCarrierServices)
-                {
-                    carrierServicesDomesticSelectedCount++;
-                    string serviceId = CorreiosServiceType.GetServiceId(cs);
-                    if (!String.IsNullOrEmpty(serviceId))
-                    {
-                        // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
-                        carrierServicesOfferedDomestic.Append($"[{serviceId}]:");
-                    }
-                }
-            }
-            _correiosSettings.ServicesOffered = carrierServicesOfferedDomestic.ToString().RemoveLastIfEndsWith(":");
+            _correiosSettings.ServicesOffered = GetSelectedServices(model);
 
             _settingService.SaveSetting(_correiosSettings);
             return Configure();
+        }
+
+        private string GetSelectedServices(CorreiosShippingModel model)
+        {
+            var carrierServicesOfferedDomestic = new StringBuilder();
+            if (model.CheckedCarrierServices != null)
+                foreach (var cs in model.CheckedCarrierServices)
+                {
+                    string serviceId = CorreiosServiceType.GetServiceId(cs);
+                    if (!string.IsNullOrEmpty(serviceId))
+                        carrierServicesOfferedDomestic.Append($"[{serviceId}]:"); // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
+                }
+            return carrierServicesOfferedDomestic.ToString().RemoveLastIfEndsWith(":");
         }
     }
 }
