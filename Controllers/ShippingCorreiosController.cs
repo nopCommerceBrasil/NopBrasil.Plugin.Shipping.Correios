@@ -7,6 +7,7 @@ using Nop.Services.Configuration;
 using Nop.Web.Framework.Controllers;
 using NopBrasil.Plugin.Shipping.Correios.Domain;
 using Nop.Web.Controllers;
+using NopBrasil.Plugin.Shipping.Correios.Utils;
 
 namespace NopBrasil.Plugin.Shipping.Correios.Controllers
 {
@@ -39,10 +40,12 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
 
             var services = new CorreiosServiceType();
             string carrierServicesOfferedDomestic = _correiosSettings.ServicesOffered;
+
             foreach (string service in services.Services)
                 model.AvailableCarrierServices.Add(service);
 
             if (!String.IsNullOrEmpty(carrierServicesOfferedDomestic))
+            {
                 foreach (string service in services.Services)
                 {
                     string serviceId = CorreiosServiceType.GetServiceId(service);
@@ -53,7 +56,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
                             model.ServicesOffered.Add(service);
                     }
                 }
-
+            }
             return View("~/Plugins/Shipping.Correios/Views/ShippingCorreios/Configure.cshtml", model);
         }
 
@@ -62,9 +65,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
         public ActionResult Configure(CorreiosShippingModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return Configure();
-            }
 
             //save settings
             _correiosSettings.Url = model.Url;
@@ -88,11 +89,11 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
                     if (!String.IsNullOrEmpty(serviceId))
                     {
                         // Add delimiters [] so that single digit IDs aren't found in multi-digit IDs
-                        carrierServicesOfferedDomestic.AppendFormat("[{0}]:", serviceId);
+                        carrierServicesOfferedDomestic.Append($"[{serviceId}]:");
                     }
                 }
             }
-            _correiosSettings.ServicesOffered = carrierServicesOfferedDomestic.ToString();
+            _correiosSettings.ServicesOffered = carrierServicesOfferedDomestic.ToString().RemoveLastIfEndsWith(":");
 
             _settingService.SaveSetting(_correiosSettings);
             return Configure();

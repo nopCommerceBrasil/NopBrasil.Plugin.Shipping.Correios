@@ -13,14 +13,10 @@ namespace NopBrasil.Plugin.Shipping.Correios.Infrastructure
     {
         public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig nopConfig)
         {
-            //we cache presentation models between requests
             builder.RegisterType<ShippingCorreiosController>().AsSelf();
             builder.RegisterType<CorreiosService>().As<ICorreiosService>().WithParameter(ResolvedParameter.ForNamed<ICacheManager>("nop_cache_static")).InstancePerDependency();
         }
 
-        public int Order
-        {
-            get { return 2; }
-        }
+        public int Order => 2;
     }
 }

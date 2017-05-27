@@ -40,31 +40,26 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.NoShipmentItems"));
                 return false;
             }
-
             if (getShippingOptionRequest.ShippingAddress == null)
             {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.AddressNotSet"));
                 return false;
             }
-
             if (getShippingOptionRequest.ShippingAddress.Country == null)
             {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.CountryNotSet"));
                 return false;
             }
-
             if (getShippingOptionRequest.ShippingAddress.StateProvince == null)
             {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.StateNotSet"));
                 return false;
             }
-
             if (getShippingOptionRequest.ShippingAddress.ZipPostalCode == null)
             {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet"));
                 return false;
             }
-
             return true;
         }
 
@@ -75,13 +70,12 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
             var response = new GetShippingOptionResponse();
 
-            if (ValidateRequest(getShippingOptionRequest, response))
+            if (!ValidateRequest(getShippingOptionRequest, response))
                 return response;
 
             try
             {
-                  WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
-
+                WSCorreiosCalcPrecoPrazo.cResultado wsResult = _correiosService.RequestCorreios(getShippingOptionRequest);
                 foreach (WSCorreiosCalcPrecoPrazo.cServico serv in wsResult?.Servicos)
                 {
                     try
@@ -109,10 +103,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
             return response;
         }
 
-        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo)
-        {
-            return new ShippingOption() { Rate = _correiosService.GetConvertedRate(rate), Name = $"{serviceName} - {prazo} dia(s)" };
-        }
+        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo) => new ShippingOption() { Rate = _correiosService.GetConvertedRate(rate), Name = $"{serviceName} - {prazo} dia(s)" };
 
         private int CalcPrazoEntrega(WSCorreiosCalcPrecoPrazo.cServico serv)
         {
@@ -134,10 +125,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 throw new NopException(_localizationService.GetResource("Plugins.Shipping.Correios.Message.InvalidValueDelivery"));
         }
 
-        public decimal? GetFixedRate(GetShippingOptionRequest getShippingOptionRequest)
-        {
-            return null;
-        }
+        public decimal? GetFixedRate(GetShippingOptionRequest getShippingOptionRequest) => null;
 
         public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
         {
@@ -177,7 +165,6 @@ namespace NopBrasil.Plugin.Shipping.Correios
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault", "Number Of Days For Delivery Default");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault.Hint", "Number Of Days For Delivery Used When The Correios Does Not Return Value.");
 
-            //ajustar mensagens de erro
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.NoShipmentItems", "No shipment items");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.AddressNotSet", "Shipping address is not set");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.CountryNotSet", "Shipping country is not set");
@@ -227,14 +214,8 @@ namespace NopBrasil.Plugin.Shipping.Correios
             base.Uninstall();
         }
 
-        public ShippingRateComputationMethodType ShippingRateComputationMethodType
-        {
-            get { return ShippingRateComputationMethodType.Realtime; }
-        }
+        public ShippingRateComputationMethodType ShippingRateComputationMethodType => ShippingRateComputationMethodType.Realtime;
 
-        public IShipmentTracker ShipmentTracker
-        {
-            get { return new CorreiosShipmentTracker(_correiosSettings); }
-        }
+        public IShipmentTracker ShipmentTracker => new CorreiosShipmentTracker(_correiosSettings);
     }
 }

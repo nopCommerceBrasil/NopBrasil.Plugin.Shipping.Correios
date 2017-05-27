@@ -10,10 +10,7 @@
                                         "PAC"
                                      };
 
-        public string[] Services
-        {
-            get { return _services; }
-        }
+        public string[] Services => _services;
 
         public static string GetServiceName(string serviceId)
         {
