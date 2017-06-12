@@ -39,5 +39,8 @@ namespace NopBrasil.Plugin.Shipping.Correios.Models
 
         [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault")]
         public int QtdDaysForDeliveryDefault { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.PercentageShippingFee")]
+        public decimal PercentageShippingFee { get; set; }
     }
 }

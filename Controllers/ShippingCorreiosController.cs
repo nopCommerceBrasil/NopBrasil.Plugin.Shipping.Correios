@@ -37,6 +37,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
             model.ServiceNameDefault = _correiosSettings.ServiceNameDefault;
             model.ShippingRateDefault = _correiosSettings.ShippingRateDefault;
             model.QtdDaysForDeliveryDefault = _correiosSettings.QtdDaysForDeliveryDefault;
+            model.PercentageShippingFee = _correiosSettings.PercentageShippingFee;
 
             var serviceTypoes = new CorreiosServiceType();
             foreach (string service in serviceTypoes.Services)
@@ -73,6 +74,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Controllers
             _correiosSettings.ServiceNameDefault = model.ServiceNameDefault;
             _correiosSettings.ShippingRateDefault = model.ShippingRateDefault;
             _correiosSettings.QtdDaysForDeliveryDefault = model.QtdDaysForDeliveryDefault;
+            _correiosSettings.PercentageShippingFee = model.PercentageShippingFee;
             _correiosSettings.ServicesOffered = GetSelectedServices(model);
 
             _settingService.SaveSetting(_correiosSettings);

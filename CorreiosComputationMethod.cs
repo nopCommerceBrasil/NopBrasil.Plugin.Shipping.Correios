@@ -81,27 +81,26 @@ namespace NopBrasil.Plugin.Shipping.Correios
                     try
                     {
                         ValidateWSResult(serv);
-                        response.ShippingOptions.Add(GetShippingOption(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR")), CorreiosServiceType.GetServiceName(serv.Codigo.ToString()), CalcPrazoEntrega(serv)));
+                        response.ShippingOptions.Add(GetShippingOption(ApplyAdditionalFee(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR"))), CorreiosServiceType.GetServiceName(serv.Codigo.ToString()), CalcPrazoEntrega(serv)));
                     }
                     catch (Exception e)
                     {
-                        response.AddError(e.Message);
+                        _logger.Error(e.Message, e);
                     }
-                }
-
-                if (response.ShippingOptions.Count <= 0)
-                {
-                    response.ShippingOptions.Add(GetShippingOption(_correiosSettings.ShippingRateDefault, _correiosSettings.ServiceNameDefault, _correiosSettings.QtdDaysForDeliveryDefault));
                 }
             }
             catch (Exception e)
             {
-                response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.ErrorCalculateRate"));
                 _logger.Error(e.Message, e);
             }
 
+            if (response.ShippingOptions.Count <= 0)
+                response.ShippingOptions.Add(GetShippingOption(_correiosSettings.ShippingRateDefault, _correiosSettings.ServiceNameDefault, _correiosSettings.QtdDaysForDeliveryDefault));
+
             return response;
         }
+
+        private decimal ApplyAdditionalFee(decimal rate) => _correiosSettings.PercentageShippingFee > 0.0M ? rate * _correiosSettings.PercentageShippingFee : rate;
 
         private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo) => new ShippingOption() { Rate = _correiosService.GetConvertedRate(rate), Name = $"{serviceName} - {prazo} dia(s)" };
 
@@ -142,7 +141,8 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 PostalCodeFrom = "",
                 CompanyCode = "",
                 Password = "",
-                AddDaysForDelivery = 0
+                AddDaysForDelivery = 0,
+                PercentageShippingFee = 1.0M
             };
             _settingService.SaveSetting(settings);
 
@@ -164,14 +164,14 @@ namespace NopBrasil.Plugin.Shipping.Correios
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.ShippingRateDefault.Hint", "Shipping Rate Used When The Correios Does Not Return Value.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault", "Number Of Days For Delivery Default");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault.Hint", "Number Of Days For Delivery Used When The Correios Does Not Return Value.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee", "Additional percentage shipping fee");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee.Hint", "Set the additional percentage shipping rate.");
 
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.NoShipmentItems", "No shipment items");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.AddressNotSet", "Shipping address is not set");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.CountryNotSet", "Shipping country is not set");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.StateNotSet", "Shipping state is not set");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet", "Shipping zip postal code is not set");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.ErrorConnectCorreios", "Error trying connect to Correios");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.ErrorCalculateRate", "Error on calculate the shipping rate");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.DeliveryUninformed", "Delivery uninformed");
             this.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.InvalidValueDelivery", "Invalid value delivery");
 
@@ -200,14 +200,14 @@ namespace NopBrasil.Plugin.Shipping.Correios
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.ShippingRateDefault.Hint");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault.Hint");
+            this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee");
+            this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee.Hint");
 
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.NoShipmentItems");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.AddressNotSet");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.CountryNotSet");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.StateNotSet");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet");
-            this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.ErrorConnectCorreios");
-            this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.ErrorCalculateRate");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.DeliveryUninformed");
             this.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.InvalidValueDelivery");
 

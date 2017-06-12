@@ -21,5 +21,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
         public decimal ShippingRateDefault { get; set; }
 
         public int QtdDaysForDeliveryDefault { get; set; }
+
+        public decimal PercentageShippingFee { get; set; }
     }
 }

@@ -125,6 +125,16 @@
 
                 <div class="form-group">
                     <div class="col-md-3">
+                        @Html.NopLabelFor(model => model.PercentageShippingFee)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.PercentageShippingFee)
+                        @Html.ValidationMessageFor(model => model.PercentageShippingFee)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
                         &nbsp;
                     </div>
                     <div class="col-md-9">
