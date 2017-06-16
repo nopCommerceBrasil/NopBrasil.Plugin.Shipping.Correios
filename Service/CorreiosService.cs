@@ -57,7 +57,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
 
         private decimal GetDeclaredValue(GetShippingOptionRequest shippingOptionRequest)
         {
-            decimal declaredValue = GetConvertedRate(shippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price));
+            decimal declaredValue = GetConvertedRateFromPrimaryCurrency(shippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price));
             return declaredValue < 18.0M ? 18.0M : declaredValue;
         }
 
@@ -92,16 +92,18 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
                 width = 11;
         }
 
-        public decimal GetConvertedRate(decimal rate)
-        {
-            var usedCurrency = _currencyService.GetCurrencyByCode(CURRENCY_CODE);
-            if (usedCurrency == null)
-                throw new NopException($"Correios shipping service. Could not load \"{CURRENCY_CODE}\" currency");
+        public decimal GetConvertedRateFromPrimaryCurrency(decimal rate) => GetConvertedRate(rate, _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId), GetSupportedCurrency());
 
-            if (usedCurrency.CurrencyCode == _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode)
-                return rate;
-            else
-                return _currencyService.ConvertToPrimaryStoreCurrency(rate, usedCurrency);
+        public decimal GetConvertedRateToPrimaryCurrency(decimal rate) => GetConvertedRate(rate, GetSupportedCurrency(), _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId));
+
+        private decimal GetConvertedRate(decimal rate, Currency source, Currency target) => (source.CurrencyCode == target.CurrencyCode) ? rate : _currencyService.ConvertCurrency(rate, source, target);
+
+        private Currency GetSupportedCurrency()
+        {
+            var currency = _currencyService.GetCurrencyByCode(CURRENCY_CODE);
+            if (currency == null)
+                throw new NopException($"Correios shipping service. Could not load \"{CURRENCY_CODE}\" currency");
+            return currency;
         }
 
         private string GetSelectecServices(CorreiosSettings correioSettings)

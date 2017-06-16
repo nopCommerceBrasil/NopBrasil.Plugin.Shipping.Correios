@@ -102,7 +102,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
         private decimal ApplyAdditionalFee(decimal rate) => _correiosSettings.PercentageShippingFee > 0.0M ? rate * _correiosSettings.PercentageShippingFee : rate;
 
-        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo) => new ShippingOption() { Rate = _correiosService.GetConvertedRate(rate), Name = $"{serviceName} - {prazo} dia(s)" };
+        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo) => new ShippingOption() { Rate = _correiosService.GetConvertedRateToPrimaryCurrency(rate), Name = $"{serviceName} - {prazo} dia(s)" };
 
         private int CalcPrazoEntrega(WSCorreiosCalcPrecoPrazo.cServico serv)
         {

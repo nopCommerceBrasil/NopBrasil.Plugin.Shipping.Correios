@@ -8,6 +8,6 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
     {
         WSCorreiosCalcPrecoPrazo.cResultado RequestCorreios(GetShippingOptionRequest getShippingOptionRequest);
 
-        decimal GetConvertedRate(decimal rate);
+        decimal GetConvertedRateToPrimaryCurrency(decimal rate);
     }
 }
