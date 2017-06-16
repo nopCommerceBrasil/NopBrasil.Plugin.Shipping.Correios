@@ -46,13 +46,19 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             decimal length, width, height;
             GetDimensions(getShippingOptionRequest, out width, out length, out height);
 
-            decimal valuePackage = getShippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price);
+            
 
             EndpointAddress endpointAddress = new EndpointAddress(_correiosSettings.Url);
 
             WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoap wsCorreios = new WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoapClient(binding, endpointAddress);
             return wsCorreios.CalcPrecoPrazo(_correiosSettings.CompanyCode, _correiosSettings.Password, GetSelectecServices(_correiosSettings), getShippingOptionRequest.ZipPostalCodeFrom,
-                getShippingOptionRequest.ShippingAddress.ZipPostalCode, GetWheight(getShippingOptionRequest).ToString(), 1, length, height, width, 0, "N", valuePackage, "N");
+                getShippingOptionRequest.ShippingAddress.ZipPostalCode, GetWheight(getShippingOptionRequest).ToString(), 1, length, height, width, 0, "N", GetDeclaredValue(getShippingOptionRequest), "N");
+        }
+
+        private decimal GetDeclaredValue(GetShippingOptionRequest shippingOptionRequest)
+        {
+            decimal declaredValue = GetConvertedRate(shippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price));
+            return declaredValue < 18.0M ? 18.0M : declaredValue;
         }
 
         private int GetWheight(GetShippingOptionRequest shippingOptionRequest)
@@ -62,10 +68,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
                 throw new NopException($"Correios shipping service. Could not load \"{MEASURE_WEIGHT_SYSTEM_KEYWORD}\" measure weight");
 
             int weight = Convert.ToInt32(Math.Ceiling(_measureService.ConvertFromPrimaryMeasureWeight(_shippingService.GetTotalWeight(shippingOptionRequest), usedMeasureWeight)));
-            if (weight < 1)
-                weight = 1;
-
-            return weight;
+            return weight < 1 ? 1 : weight;
         }
 
         private void GetDimensions(GetShippingOptionRequest shippingOptionRequest, out decimal width, out decimal length, out decimal height)
