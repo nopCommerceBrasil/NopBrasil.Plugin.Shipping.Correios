@@ -46,8 +46,6 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             decimal length, width, height;
             GetDimensions(getShippingOptionRequest, out width, out length, out height);
 
-            
-
             EndpointAddress endpointAddress = new EndpointAddress(_correiosSettings.Url);
 
             WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoap wsCorreios = new WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoapClient(binding, endpointAddress);
