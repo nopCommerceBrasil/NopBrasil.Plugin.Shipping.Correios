@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Web.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Plugins;
@@ -19,16 +18,18 @@ namespace NopBrasil.Plugin.Shipping.Correios
         private readonly ISettingService _settingService;
         private readonly CorreiosSettings _correiosSettings;
         private readonly ILogger _logger;
+        private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
         private readonly ICorreiosService _correiosService;
 
         public CorreiosComputationMethod(ISettingService settingService,
-            CorreiosSettings correiosSettings, ILogger logger,
+            CorreiosSettings correiosSettings, ILogger logger, IWebHelper webHelper,
             ILocalizationService localizationService, ICorreiosService correiosService)
         {
             this._settingService = settingService;
             this._correiosSettings = correiosSettings;
             this._logger = logger;
+            this._webHelper = webHelper;
             this._localizationService = localizationService;
             this._correiosService = correiosService;
         }
@@ -36,31 +37,16 @@ namespace NopBrasil.Plugin.Shipping.Correios
         private bool ValidateRequest(GetShippingOptionRequest getShippingOptionRequest, GetShippingOptionResponse response)
         {
             if (getShippingOptionRequest.Items == null)
-            {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.NoShipmentItems"));
-                return false;
-            }
             if (getShippingOptionRequest.ShippingAddress == null)
-            {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.AddressNotSet"));
-                return false;
-            }
             if (getShippingOptionRequest.ShippingAddress.Country == null)
-            {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.CountryNotSet"));
-                return false;
-            }
             if (getShippingOptionRequest.ShippingAddress.StateProvince == null)
-            {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.StateNotSet"));
-                return false;
-            }
             if (getShippingOptionRequest.ShippingAddress.ZipPostalCode == null)
-            {
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet"));
-                return false;
-            }
-            return true;
+            return response.Errors.Count > 0 ? false : true;
         }
 
         public GetShippingOptionResponse GetShippingOptions(GetShippingOptionRequest getShippingOptionRequest)
@@ -126,12 +112,7 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
         public decimal? GetFixedRate(GetShippingOptionRequest getShippingOptionRequest) => null;
 
-        public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
-        {
-            actionName = "Configure";
-            controllerName = "ShippingCorreios";
-            routeValues = new RouteValueDictionary() { { "Namespaces", "NopBrasil.Plugin.Shipping.Correios.Controllers" }, { "area", null } };
-        }
+        public override string GetConfigurationPageUrl() => _webHelper.GetStoreLocation() + "Admin/ShippingCorreios/Configure";
 
         public override void Install()
         {

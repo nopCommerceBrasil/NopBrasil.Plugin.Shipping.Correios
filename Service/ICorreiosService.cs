@@ -1,6 +1,4 @@
-﻿using Nop.Core.Domain.Directory;
-using Nop.Services.Directory;
-using Nop.Services.Shipping;
+﻿using Nop.Services.Shipping;
 
 namespace NopBrasil.Plugin.Shipping.Correios.Service
 {

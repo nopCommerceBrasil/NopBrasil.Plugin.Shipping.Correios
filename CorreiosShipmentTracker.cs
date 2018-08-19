@@ -28,5 +28,4 @@ namespace NopBrasil.Plugin.Shipping.Correios
             throw new NotImplementedException("");
         }
     }
-
 }

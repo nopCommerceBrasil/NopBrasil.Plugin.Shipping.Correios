@@ -1,8 +1,8 @@
 ﻿namespace NopBrasil.Plugin.Shipping.Correios.Domain
 {
-    public class CorreiosServiceType
+    public static class CorreiosServiceType
     {
-        private string[] _services = {
+        public static string[] Services { get; } = {
                                         "Sedex",
                                         "Sedex a Cobrar",
                                         "Sedex 10",
@@ -10,58 +10,42 @@
                                         "PAC"
                                      };
 
-        public string[] Services => _services;
-
         public static string GetServiceName(string serviceId)
         {
-            string service = string.Empty;
             switch (serviceId)
             {
                 case "40010":
-                    service = "Sedex";
-                    break;
+                    return "Sedex";
                 case "40045":
-                    service = "Sedex a Cobrar";
-                    break;
+                    return "Sedex a Cobrar";
                 case "40215":
-                    service = "Sedex 10";
-                    break;
+                    return "Sedex 10";
                 case "40290":
-                    service = "Sedex Hoje";
-                    break;
+                    return "Sedex Hoje";
                 case "41106":
-                    service = "PAC";
-                    break;
+                    return "PAC";
                 default:
-                    break;
+                    return string.Empty;
             }
-            return service;
         }
 
         public static string GetServiceId(string service)
         {
-            string serviceId = string.Empty;
             switch (service)
             {
                 case "Sedex":
-                    serviceId = "40010";
-                    break;
+                    return "40010";
                 case "Sedex a Cobrar":
-                    serviceId = "40045";
-                    break;
+                    return "40045";
                 case "Sedex 10":
-                    serviceId = "40215";
-                    break;
+                    return "40215";
                 case "Sedex Hoje":
-                    serviceId = "40290";
-                    break;
+                    return "40290";
                 case "PAC":
-                    serviceId = "41106";
-                    break;
+                    return "41106";
                 default:
-                    break;
+                    return string.Empty;
             }
-            return serviceId;
         }
     }
 }

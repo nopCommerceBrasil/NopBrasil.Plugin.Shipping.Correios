@@ -2,7 +2,6 @@
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
-using NopBrasil.Plugin.Shipping.Correios.Controllers;
 using NopBrasil.Plugin.Shipping.Correios.Service;
 
 namespace NopBrasil.Plugin.Shipping.Correios.Infrastructure
@@ -11,7 +10,6 @@ namespace NopBrasil.Plugin.Shipping.Correios.Infrastructure
     {
         public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig nopConfig)
         {
-            builder.RegisterType<ShippingCorreiosController>().AsSelf();
             builder.RegisterType<CorreiosService>().As<ICorreiosService>().InstancePerDependency();
         }
 

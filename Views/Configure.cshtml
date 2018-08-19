@@ -1,16 +1,14 @@
-﻿@{
-    Layout = "";
+﻿@model NopBrasil.Plugin.Shipping.Correios.Models.CorreiosShippingModel
+
+@{
+    Layout = "_ConfigurePlugin";
 }
-@model NopBrasil.Plugin.Shipping.Correios.Models.CorreiosShippingModel
-@using Nop.Web.Framework;
 
 <div style="color:Red;">
     @Html.ValidationSummary(false)
 </div>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+<form asp-controller="ShippingCorreios" asp-action="Configure" method="post">
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -28,65 +26,65 @@
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.Url)
+                        <nop-label asp-for="Url" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.Url)
-                        @Html.ValidationMessageFor(model => model.Url)
+                        <nop-editor asp-for="Url" />
+                        <span asp-validation-for="Url"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.CompanyCode)
+                        <nop-label asp-for="CompanyCode" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.CompanyCode)
-                        @Html.ValidationMessageFor(model => model.CompanyCode)
+                        <nop-editor asp-for="CompanyCode" />
+                        <span asp-validation-for="CompanyCode"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.Password)
+                        <nop-label asp-for="Password" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.Password)
-                        @Html.ValidationMessageFor(model => model.Password)
+                        <nop-editor asp-for="Password" />
+                        <span asp-validation-for="Password"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.PostalCodeFrom)
+                        <nop-label asp-for="PostalCodeFrom" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.PostalCodeFrom)
-                        @Html.ValidationMessageFor(model => model.PostalCodeFrom)
+                        <nop-editor asp-for="PostalCodeFrom" />
+                        <span asp-validation-for="PostalCodeFrom"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.AddDaysForDelivery)
+                        <nop-label asp-for="AddDaysForDelivery" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.AddDaysForDelivery)
-                        @Html.ValidationMessageFor(model => model.AddDaysForDelivery)
+                        <nop-editor asp-for="AddDaysForDelivery" />
+                        <span asp-validation-for="AddDaysForDelivery"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.AvailableCarrierServices)
+                        <nop-label asp-for="AvailableCarrierServices" />
                     </div>
                     <div class="col-md-9">
                         <div style="height: 250px; width: 300px; overflow: auto; border: solid 1px #bbb;">
                             @foreach (var csd in Model.AvailableCarrierServices)
                             {
                                 <input type="checkbox" name="CheckedCarrierServices" value="@(csd)" checked="@Model.ServicesOffered.Contains(csd)" />
-                                    <label>@csd</label>
-                                    <br />
+                                <label>@csd</label>
+                                <br />
                             }
                         </div>
 
@@ -95,49 +93,46 @@
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.ServiceNameDefault)
+                        <nop-label asp-for="ServiceNameDefault" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.ServiceNameDefault)
-                        @Html.ValidationMessageFor(model => model.ServiceNameDefault)
+                        <nop-editor asp-for="ServiceNameDefault" />
+                        <span asp-validation-for="ServiceNameDefault"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.ShippingRateDefault)
+                        <nop-label asp-for="ShippingRateDefault" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.ShippingRateDefault)
-                        @Html.ValidationMessageFor(model => model.ShippingRateDefault)
+                        <nop-editor asp-for="ShippingRateDefault" />
+                        <span asp-validation-for="ShippingRateDefault"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.QtdDaysForDeliveryDefault)
+                        <nop-label asp-for="QtdDaysForDeliveryDefault" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.QtdDaysForDeliveryDefault)
-                        @Html.ValidationMessageFor(model => model.QtdDaysForDeliveryDefault)
+                        <nop-editor asp-for="QtdDaysForDeliveryDefault" />
+                        <span asp-validation-for="QtdDaysForDeliveryDefault"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-md-3">
-                        @Html.NopLabelFor(model => model.PercentageShippingFee)
+                        <nop-label asp-for="PercentageShippingFee" />
                     </div>
                     <div class="col-md-9">
-                        @Html.EditorFor(model => model.PercentageShippingFee)
-                        @Html.ValidationMessageFor(model => model.PercentageShippingFee)
+                        <nop-editor asp-for="PercentageShippingFee" />
+                        <span asp-validation-for="PercentageShippingFee"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="col-md-3">
-                        &nbsp;
-                    </div>
-                    <div class="col-md-9">
+                    <div class="col-md-9 col-md-offset-3">
                         <input type="submit" name="save" class="btn bg-blue" value="@T("Admin.Common.Save")" />
                     </div>
                 </div>
@@ -145,4 +140,4 @@
             </div>
         </div>
     </div>
-}
+</form>
