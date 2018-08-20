@@ -66,8 +66,8 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 {
                     try
                     {
-                        ValidateWSResult(serv);
-                        response.ShippingOptions.Add(GetShippingOption(ApplyAdditionalFee(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR"))), CorreiosServiceType.GetServiceName(serv.Codigo.ToString()), CalcPrazoEntrega(serv)));
+                        var obs = ValidateWSResult(serv);
+                        response.ShippingOptions.Add(GetShippingOption(ApplyAdditionalFee(Convert.ToDecimal(serv.Valor, new CultureInfo("pt-BR"))), CorreiosServiceType.GetServiceName(serv.Codigo.ToString()), CalcPrazoEntrega(serv), obs));
                     }
                     catch (Exception e)
                     {
@@ -88,7 +88,13 @@ namespace NopBrasil.Plugin.Shipping.Correios
 
         private decimal ApplyAdditionalFee(decimal rate) => _correiosSettings.PercentageShippingFee > 0.0M ? rate * _correiosSettings.PercentageShippingFee : rate;
 
-        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo) => new ShippingOption() { Rate = _correiosService.GetConvertedRateToPrimaryCurrency(rate), Name = $"{serviceName} - {prazo} dia(s)" };
+        private ShippingOption GetShippingOption(decimal rate, string serviceName, int prazo, string obs = null)
+        {
+            var shippingName = $"{serviceName} - {prazo} dia(s)";
+            if (!string.IsNullOrEmpty(obs))
+                shippingName += $" - {obs}";
+            return new ShippingOption() { Rate = _correiosService.GetConvertedRateToPrimaryCurrency(rate), Name = shippingName };
+        }
 
         private int CalcPrazoEntrega(WSCorreiosCalcPrecoPrazo.cServico serv)
         {
@@ -98,16 +104,24 @@ namespace NopBrasil.Plugin.Shipping.Correios
             return prazo;
         }
 
-        private void ValidateWSResult(WSCorreiosCalcPrecoPrazo.cServico wsServico)
+        private string ValidateWSResult(WSCorreiosCalcPrecoPrazo.cServico wsServico)
         {
-            if (string.IsNullOrEmpty(wsServico.Erro))
-                throw new NopException(wsServico.Erro + " - " + wsServico.MsgErro);
+            string retorno = string.Empty;
+            if (!string.IsNullOrEmpty(wsServico.Erro) && (wsServico.Erro != "0"))
+            {
+                if ((wsServico.Erro == "009") || (wsServico.Erro == "010") || (wsServico.Erro == "011"))
+                    retorno = wsServico.MsgErro;
+                else
+                    throw new NopException(wsServico.Erro + " - " + wsServico.MsgErro);
+            }
 
             if (Convert.ToInt32(wsServico.PrazoEntrega) <= 0)
                 throw new NopException(_localizationService.GetResource("Plugins.Shipping.Correios.Message.DeliveryUninformed"));
 
             if (Convert.ToDecimal(wsServico.Valor, new CultureInfo("pt-BR")) <= 0)
                 throw new NopException(_localizationService.GetResource("Plugins.Shipping.Correios.Message.InvalidValueDelivery"));
+
+            return retorno;
         }
 
         public decimal? GetFixedRate(GetShippingOptionRequest getShippingOptionRequest) => null;
