@@ -8,6 +8,7 @@ using System.Linq;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 using NopBrasil.Plugin.Shipping.Correios.Utils;
+using Nop.Services.Common;
 
 namespace NopBrasil.Plugin.Shipping.Correios.Service
 {
@@ -24,15 +25,17 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         private readonly CorreiosSettings _correiosSettings;
         private readonly ICurrencyService _currencyService;
         private readonly CurrencySettings _currencySettings;
+        private readonly IAddressService _addressService;
 
         public CorreiosService(IMeasureService measureService, IShippingService shippingService, CorreiosSettings correiosSettings,
-            ICurrencyService currencyService, CurrencySettings currencySettings)
+            ICurrencyService currencyService, CurrencySettings currencySettings, IAddressService addressService)
         {
             this._measureService = measureService;
             this._shippingService = shippingService;
             this._correiosSettings = correiosSettings;
             this._currencyService = currencyService;
             this._currencySettings = currencySettings;
+            this._addressService = addressService;
         }
 
         public WSCorreiosCalcPrecoPrazo.cResultado RequestCorreios(GetShippingOptionRequest getShippingOptionRequest)
@@ -40,8 +43,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             Binding binding = new BasicHttpBinding();
             binding.Name = "CalcPrecoPrazoWSSoap";
 
-            if (string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
-                getShippingOptionRequest.ZipPostalCodeFrom = _correiosSettings.PostalCodeFrom;
+            getShippingOptionRequest.ZipPostalCodeFrom = GetZipPostalCodeFrom(getShippingOptionRequest);
 
             decimal length, width, height;
             GetDimensions(getShippingOptionRequest, out width, out length, out height);
@@ -51,6 +53,15 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoap wsCorreios = new WSCorreiosCalcPrecoPrazo.CalcPrecoPrazoWSSoapClient(binding, endpointAddress);
             return wsCorreios.CalcPrecoPrazo(_correiosSettings.CompanyCode, _correiosSettings.Password, GetSelectecServices(_correiosSettings), getShippingOptionRequest.ZipPostalCodeFrom,
                 getShippingOptionRequest.ShippingAddress.ZipPostalCode, GetWheight(getShippingOptionRequest).ToString(), 1, length, height, width, 0, "N", GetDeclaredValue(getShippingOptionRequest), "N");
+        }
+
+        private string GetZipPostalCodeFrom(GetShippingOptionRequest getShippingOptionRequest)
+        {
+            if ((getShippingOptionRequest.WarehouseFrom != null) && (!string.IsNullOrEmpty(_addressService.GetAddressById(getShippingOptionRequest.WarehouseFrom.AddressId)?.ZipPostalCode)))
+                return  _addressService.GetAddressById(getShippingOptionRequest.WarehouseFrom.AddressId).ZipPostalCode;
+            if (!string.IsNullOrEmpty(getShippingOptionRequest.ZipPostalCodeFrom))
+                return getShippingOptionRequest.ZipPostalCodeFrom;
+            return _correiosSettings.PostalCodeFrom;
         }
 
         private decimal GetDeclaredValue(GetShippingOptionRequest shippingOptionRequest)
