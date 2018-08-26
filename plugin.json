@@ -3,7 +3,7 @@
   "FriendlyName": "Correios (Empresa Brasileira de Correios e Telégrafos)",
   "SystemName": "Shipping.Correios",
   "Version": "1.20",
-  "SupportedVersions": [ "4.00" ],
+  "SupportedVersions": [ "4.10" ],
   "Author": "nopCommerce Brasil - www.nopcommercebrasil.com - nopcommercebrasil@nopcommercebrasil.com",
   "DisplayOrder": 1,
   "FileName": "NopBrasil.Plugin.Shipping.Correios.dll",

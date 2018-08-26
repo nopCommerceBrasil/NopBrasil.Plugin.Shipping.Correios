@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
  <PropertyGroup>
-   <TargetFramework>net461</TargetFramework>
+   <TargetFramework>netcoreapp2.1</TargetFramework>
     <Copyright>Copyright © nopCommerce Brasil</Copyright> 
     <Company>nopCommerce Brasil</Company> 
     <Authors>nopCommerce Brasil - www.nopcommercebrasil.com - nopcommercebrasil@nopcommercebrasil.com</Authors> 
@@ -12,17 +12,17 @@
     <RepositoryType>Git</RepositoryType>
  </PropertyGroup>  
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-   <OutputPath>..\nopCommerce400\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
+   <OutputPath>..\nopCommerce410\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
    <OutDir>$(OutputPath)</OutDir>
  </PropertyGroup>
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-   <OutputPath>..\nopCommerce400\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
+   <OutputPath>..\nopCommerce410\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
    <OutDir>$(OutputPath)</OutDir>
  </PropertyGroup>
  <!-- This target execute after "Build" target -->
  <Target Name="NopTarget" AfterTargets="Build">
    <!-- Delete unnecessary libraries from plugins path -->
-   <MSBuild Projects="$(MSBuildProjectDirectory)\..\nopCommerce400\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+   <MSBuild Projects="$(MSBuildProjectDirectory)\..\nopCommerce410\Build\ClearPluginAssemblies.proj" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
  </Target>
  <ItemGroup>
    <None Remove="Content\Images\logoPagamento.png" />
@@ -50,7 +50,7 @@
    </Content>
  </ItemGroup>
  <ItemGroup>
-   <ProjectReference Include="..\nopCommerce400\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
-   <ProjectReference Include="..\nopCommerce400\Presentation\Nop.Web\Nop.Web.csproj" />
+   <ProjectReference Include="..\nopCommerce410\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+   <ProjectReference Include="..\nopCommerce410\Presentation\Nop.Web\Nop.Web.csproj" />
  </ItemGroup>
 </Project>
