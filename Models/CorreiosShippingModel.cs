@@ -43,5 +43,32 @@ namespace NopBrasil.Plugin.Shipping.Correios.Models
 
         [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.PercentageShippingFee")]
         public decimal PercentageShippingFee { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.DeclaredMinimumValue")]
+        public decimal DeclaredMinimumValue { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MinimumLength")]
+        public decimal MinimumLength { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MinimumHeight")]
+        public decimal MinimumHeight { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MinimumWidth")]
+        public decimal MinimumWidth { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MaximumLength")]
+        public decimal MaximumLength { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MaximumHeight")]
+        public decimal MaximumHeight { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MaximumWidth")]
+        public decimal MaximumWidth { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MinimumWeight")]
+        public int MinimumWeight { get; set; }
+
+        [NopResourceDisplayName("Plugins.Shipping.Correios.Fields.MaximumWeight")]
+        public int MaximumWeight { get; set; }
     }
 }

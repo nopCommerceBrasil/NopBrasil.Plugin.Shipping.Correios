@@ -2,7 +2,7 @@
 using System.Globalization;
 using Nop.Core;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Plugins;
+using Nop.Services.Plugins;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
@@ -137,7 +137,16 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 CompanyCode = "",
                 Password = "",
                 AddDaysForDelivery = 0,
-                PercentageShippingFee = 1.0M
+                PercentageShippingFee = 1.0M,
+                DeclaredMinimumValue = 19.5M,
+                MinimumWeight = 1,
+                MaximumWeight = 30,
+                MinimumHeight = 2.0M,
+                MinimumLength = 16.0M,
+                MinimumWidth = 11.0M,
+                MaximumHeight = 105.0M,
+                MaximumLength = 105.0M,
+                MaximumWidth = 105.0M
             };
             _settingService.SaveSetting(settings);
 
@@ -161,6 +170,24 @@ namespace NopBrasil.Plugin.Shipping.Correios
             _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault.Hint", "Number Of Days For Delivery Used When The Correios Does Not Return Value.");
             _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee", "Additional percentage shipping fee");
             _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee.Hint", "Set the additional percentage shipping rate.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.DeclaredMinimumValue", "Declared Minimum Value");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.DeclaredMinimumValue.Hint", "The Minimum Amount Accepted by Correios for Declaration");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumLength", "Minimum Length");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumLength.Hint", "Set the Minimum Length");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumHeight", "Minimum Height");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumHeight.Hint", "Set the Minimum Height");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWidth", "Minimum Width");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWidth.Hint", "Set the Minimum Width");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumLength", "Maximum Length");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumLength.Hint", "Set the Maximum Length");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumHeight", "Maximum Height");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumHeight.Hint", "Set the Maximum Height");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWidth", "Maximum Width");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWidth.Hint", "Set the Maximum Width");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWeight", "Minimum Weight");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWeight.Hint", "Set the Minimum Weight");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWeight", "Maximum Weight");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWeight.Hint", "Set the Maximum Weight");
 
             _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.NoShipmentItems", "No shipment items");
             _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Shipping.Correios.Message.AddressNotSet", "Shipping address is not set");
@@ -197,6 +224,24 @@ namespace NopBrasil.Plugin.Shipping.Correios
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.QtdDaysForDeliveryDefault.Hint");
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee");
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.PercentageShippingFee.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.DeclaredMinimumvalue");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.DeclaredMinimumvalue.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumLength");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumLength.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumHeight");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumHeight.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWidth");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWidth.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumLength");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumLength.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumHeight");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumHeight.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWidth");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWidth.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWeight");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MinimumWeight.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWeight");
+            _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Fields.MaximumWeight.Hint");
 
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.NoShipmentItems");
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.AddressNotSet");
@@ -205,7 +250,6 @@ namespace NopBrasil.Plugin.Shipping.Correios
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet");
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.DeliveryUninformed");
             _localizationService.DeletePluginLocaleResource("Plugins.Shipping.Correios.Message.InvalidValueDelivery");
-
             base.Uninstall();
         }
 

@@ -18,7 +18,6 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         private const string MEASURE_WEIGHT_SYSTEM_KEYWORD = "kg";
         private const string MEASURE_DIMENSION_SYSTEM_KEYWORD = "centimeter";
         private const string CURRENCY_CODE = "BRL";
-        //colocar o tamanho/peso mínimo/máximo permitido dos produtos como configuração
 
         private readonly IMeasureService _measureService;
         private readonly IShippingService _shippingService;
@@ -67,7 +66,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
         private decimal GetDeclaredValue(GetShippingOptionRequest shippingOptionRequest)
         {
             decimal declaredValue = GetConvertedRateFromPrimaryCurrency(shippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price));
-            return declaredValue < 18.0M ? 18.0M : declaredValue;
+            return Math.Max(declaredValue, _correiosSettings.DeclaredMinimumValue);
         }
 
         private int GetWheight(GetShippingOptionRequest shippingOptionRequest)
@@ -77,7 +76,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
                 throw new NopException($"Correios shipping service. Could not load \"{MEASURE_WEIGHT_SYSTEM_KEYWORD}\" measure weight");
 
             int weight = Convert.ToInt32(Math.Ceiling(_measureService.ConvertFromPrimaryMeasureWeight(_shippingService.GetTotalWeight(shippingOptionRequest), usedMeasureWeight)));
-            return weight < 1 ? 1 : weight;
+            return AcceptedDimensions(weight, _correiosSettings.MinimumWeight, _correiosSettings.MaximumWeight);
         }
 
         private void GetDimensions(GetShippingOptionRequest shippingOptionRequest, out decimal width, out decimal length, out decimal height)
@@ -89,16 +88,13 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             _shippingService.GetDimensions(shippingOptionRequest.Items, out width, out length, out height);
 
             length = _measureService.ConvertFromPrimaryMeasureDimension(length, usedMeasureDimension);
-            if (length < 16)
-                length = 16;
+            length = AcceptedDimensions(length, _correiosSettings.MinimumLength, _correiosSettings.MaximumLength);
 
             height = _measureService.ConvertFromPrimaryMeasureDimension(height, usedMeasureDimension);
-            if (height < 2)
-                height = 2;
+            height = AcceptedDimensions(height, _correiosSettings.MinimumHeight, _correiosSettings.MaximumHeight);
 
             width = _measureService.ConvertFromPrimaryMeasureDimension(width, usedMeasureDimension);
-            if (width < 11)
-                width = 11;
+            width = AcceptedDimensions(width, _correiosSettings.MinimumWidth, _correiosSettings.MaximumWidth);
         }
 
         public decimal GetConvertedRateFromPrimaryCurrency(decimal rate) => GetConvertedRate(rate, _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId), GetSupportedCurrency());
@@ -121,5 +117,9 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
             correioSettings.ServicesOffered.RemoveLastIfEndsWith(":").Split(':').ToList().ForEach(service => sb.Append(service?.Remove(0, 1).Replace(']', ',')));
             return sb.ToString().Remove(sb.ToString().Length - 1, 1);
         }
+
+        private decimal AcceptedDimensions(decimal value, decimal minimum, decimal maximum) => Math.Min(Math.Max(value, minimum), maximum);
+
+        private int AcceptedDimensions(int value, int minimum, int maximum) => Math.Min(Math.Max(value, minimum), maximum);
     }
 }

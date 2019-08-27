@@ -23,5 +23,23 @@ namespace NopBrasil.Plugin.Shipping.Correios
         public int QtdDaysForDeliveryDefault { get; set; }
 
         public decimal PercentageShippingFee { get; set; }
+
+        public decimal DeclaredMinimumValue { get; set; }
+
+        public decimal MinimumLength { get; set; }
+
+        public decimal MinimumHeight { get; set; }
+
+        public decimal MinimumWidth { get; set; }
+
+        public decimal MaximumLength { get; set; }
+
+        public decimal MaximumHeight { get; set; }
+
+        public decimal MaximumWidth { get; set; }
+
+        public int MinimumWeight { get; set; }
+
+        public int MaximumWeight { get; set; }
     }
 }

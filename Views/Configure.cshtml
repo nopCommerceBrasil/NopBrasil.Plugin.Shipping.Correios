@@ -131,6 +131,97 @@
                     </div>
                 </div>
 
+                //daqui pra baixo
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="DeclaredMinimumValue" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="DeclaredMinimumValue" />
+                        <span asp-validation-for="DeclaredMinimumValue"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MinimumLength" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MinimumLength" />
+                        <span asp-validation-for="MinimumLength"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MinimumHeight" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MinimumHeight" />
+                        <span asp-validation-for="MinimumHeight"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MinimumWidth" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MinimumWidth" />
+                        <span asp-validation-for="MinimumWidth"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MaximumLength" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MaximumLength" />
+                        <span asp-validation-for="MaximumLength"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MaximumHeight" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MaximumHeight" />
+                        <span asp-validation-for="MaximumHeight"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MaximumWidth" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MaximumWidth" />
+                        <span asp-validation-for="MaximumWidth"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MinimumWeight" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MinimumWeight" />
+                        <span asp-validation-for="MinimumWeight"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="MaximumWeight" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="MaximumWeight" />
+                        <span asp-validation-for="MaximumWeight"></span>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <div class="col-md-9 col-md-offset-3">
                         <input type="submit" name="save" class="btn bg-blue" value="@T("Admin.Common.Save")" />
