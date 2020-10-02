@@ -1,29 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
  <PropertyGroup>
-   <TargetFramework>netcoreapp2.2</TargetFramework>
+   <TargetFramework>netcoreapp3.1</TargetFramework>
     <Copyright>Copyright © nopCommerce Brasil</Copyright> 
     <Company>nopCommerce Brasil</Company> 
     <Authors>nopCommerce Brasil - www.nopcommercebrasil.com - nopcommercebrasil@nopcommercebrasil.com</Authors> 
-    <Version>1.30</Version> 
+    <Version>1.40</Version> 
     <Description>Correios integration plugin for nopCommerce to calculate the value and delivery time for an order</Description> 
     <PackageLicenseUrl></PackageLicenseUrl> 
     <PackageProjectUrl>http://www.nopcommercebrasil.com/</PackageProjectUrl> 
     <RepositoryUrl>https://github.com/nopCommerceBrasil/NopBrasil.Plugin.Shipping.Correios</RepositoryUrl> 
     <RepositoryType>Git</RepositoryType>
  </PropertyGroup>  
+    
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-   <OutputPath>..\nopCommerce420\src\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
+   <OutputPath>..\..\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
    <OutDir>$(OutputPath)</OutDir>
  </PropertyGroup>
+    
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-   <OutputPath>..\nopCommerce420\src\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
+   <OutputPath>..\..\Presentation\Nop.Web\Plugins\Shipping.Correios\</OutputPath>
    <OutDir>$(OutputPath)</OutDir>
  </PropertyGroup>
+    
  <!-- This target execute after "Build" target -->
  <Target Name="NopTarget" AfterTargets="Build">
    <!-- Delete unnecessary libraries from plugins path -->
    <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
  </Target>
+    
  <ItemGroup>
    <None Remove="Content\Images\logoPagamento.png" />
    <None Remove="Content\Images\nopCommerceBrasil.png" />
@@ -32,28 +36,32 @@
    <None Remove="Views\Configure.cshtml" />
    <None Remove="Views\_ViewImports.cshtml" />
  </ItemGroup>
+    
  <ItemGroup>
    <Content Include="Content\Images\nopCommerceBrasil.png">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </Content>
    <Content Include="Logo.jpg">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </Content>
    <Content Include="plugin.json">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </Content>
    <Content Include="Views\Configure.cshtml">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </Content>
    <Content Include="Views\_ViewImports.cshtml">
-     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
    </Content>
  </ItemGroup>
+    
  <ItemGroup>
-   <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\nopCommerce420\src\Build\ClearPluginAssemblies.proj" />
+   <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
  </ItemGroup>
+    
  <ItemGroup>
-   <ProjectReference Include="..\nopCommerce420\src\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
-   <ProjectReference Include="..\nopCommerce420\src\Presentation\Nop.Web\Nop.Web.csproj" />
+   <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+   <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
  </ItemGroup>
+    
 </Project>

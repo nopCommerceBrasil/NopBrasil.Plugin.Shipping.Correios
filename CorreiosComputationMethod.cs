@@ -40,9 +40,9 @@ namespace NopBrasil.Plugin.Shipping.Correios
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.NoShipmentItems"));
             if (getShippingOptionRequest.ShippingAddress == null)
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.AddressNotSet"));
-            if (getShippingOptionRequest.ShippingAddress.Country == null)
+            if (getShippingOptionRequest.CountryFrom == null)
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.CountryNotSet"));
-            if (getShippingOptionRequest.ShippingAddress.StateProvince == null)
+            if (getShippingOptionRequest.StateProvinceFrom == null)
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.StateNotSet"));
             if (getShippingOptionRequest.ShippingAddress.ZipPostalCode == null)
                 response.AddError(_localizationService.GetResource("Plugins.Shipping.Correios.Message.PostalCodeNotSet"));
