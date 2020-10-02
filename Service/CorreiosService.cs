@@ -65,7 +65,7 @@ namespace NopBrasil.Plugin.Shipping.Correios.Service
 
         private decimal GetDeclaredValue(GetShippingOptionRequest shippingOptionRequest)
         {
-            decimal declaredValue = GetConvertedRateFromPrimaryCurrency(shippingOptionRequest.Items.Sum(item => item.ShoppingCartItem.Product.Price));
+            decimal declaredValue = GetConvertedRateFromPrimaryCurrency(shippingOptionRequest.Items.Sum(item => item.Product.Price));
             return Math.Max(declaredValue, _correiosSettings.DeclaredMinimumValue);
         }
 
